@@ -1,6 +1,6 @@
 IMPORTANT:
 Bing API will be depreciated as of Aug 01, 2012. It means global search 
-will not work any more in Crot. You can still use it for local 
+WILL NOT work any more in Crot. You can still use it for local 
 detection. for local detection you do not need to set up AppID
 
 README
@@ -17,6 +17,7 @@ Crot Plagiarism plugin for Moodle 2.0
 1.2 SETTINGS in php ini 
   allow_url_fopen = On
 
+!!! as of August 1 2012 you may skip step 1.3 as Bing is not accessible anymore
 1.3 Bing Application (AppID) key
 You need to obtain the Bing Application ID key from the Microsoft to use the global search features.  
 Open one of the following links to get the ID : 
@@ -28,11 +29,11 @@ http://www.bing.com/developers
 and follow the instructions to get the App ID.
 
 INSTALLATION
-1. Untar the crot folder into plagiarism/crot.
+1. Untar the crot folder into plagiarism/crot. Make sure you rename module folder to crot!
 2. Login to Moodle as an admin. Plugins check page will be opened. Click on Upgrade button at the bottom of the page. Moodle will setup the required tables for you.
 3. Go to Advanced features in the admin's menu and check "Enable plagiarism plugins" option. Save changes. 
 4. Open Plugins/Plagiarism prevention/Crot link from the admin's menu.
-5. Check "Enable Crot" and put Bing Application ID key in the appropriate text box. Save changes.
+5. OBSOLETE because of Bing issue: Check "Enable Crot" and put Bing Application ID key in the appropriate text box. Save changes.
 6. Other settings you may change later based on your experience with the plug-in. 
 	The complete description of these settings is as follows:
 		- Student disclosure: This text will appear on the assignment submission page when student work will be uploaded to the system.
@@ -48,7 +49,7 @@ INSTALLATION
    		- Number of web documents to be downloaded: How many web documents will be downloaded to your server from the list of possible sources on the web. Recommended value is 10.
    		- Culture info for global search: Culture information is used in queries for Bing search engine.
         - Maximum file size: Files with the size more than this value are not downloaded from the internet. Recommended value is 1000000.
-7. Select Test global search to run a quick test of global search. If it works you will see results of test search query on the next step.
+7. OBSOLETE because of Bing issue: Select Test global search to run a quick test of global search. If it works you will see results of test search query on the next step.
 8. We would really appreciate if you check Registration option and complete simple registration form. We are doing this continious survey to apply for funding to support project development. 
 9. Click Save Changes button
 10. IMPORTANT: You need to setup CRON running on your server to have Crot running. Please refer to the implementation section below. 
