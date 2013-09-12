@@ -16,7 +16,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 $plugin->version =  2013061400;
-$plugin->requires = 2010122500;
+$plugin->requires = 2012062600;
 $plugin->maturity =MATURITY_BETA;
 $plugin->release ='2.3.0.2';
 $plugin->cron     = 0;
