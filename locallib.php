@@ -186,7 +186,8 @@ function GetFingerprint ($atext)
     		echo "exception with stripping\n"; flush();
      	}
 	$text_len = mb_strlen($stripped_text, "utf-8") - $gram_size;
-
+	
+	
 	// get the original positions
 	$offset=0;
 	$curtext = $atext;
@@ -197,6 +198,7 @@ function GetFingerprint ($atext)
 	$bpos=0;
 	$offset=0;
 	$values = array();
+
 	for ($i=0; $i<$text_len; $i++){
 		while ($btext[$offset]!=$curstripped[$i]){
 			$offset++;

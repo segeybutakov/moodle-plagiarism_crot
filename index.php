@@ -9,7 +9,7 @@
     global $CFG;
 
 	require_once($CFG->dirroot."/course/lib.php");
-	require_once($CFG->dirroot."/mod/assignment/lib.php");
+//	require_once($CFG->dirroot."/mod/assignment/lib.php");
 
     $ida = required_param('id_a', PARAM_INT);   // doc id
     $user_id = required_param('user_id', PARAM_INT); 
@@ -39,10 +39,28 @@
     if (!$fileA = $DB->get_record("files", array("id" => $subA->file_id))) {
         print_error(get_string('incorrect_fileAid','plagiarism_crot'));
     }
-	if (!$submissionA = $DB->get_record("assignment_submissions", array("id" => $fileA->itemid))) {
+    // sw define type of the assignment
+    $asnAtype = $fileA->component;
+    switch ($asnAtype) {
+        case "assignsubmission_file":
+            $asnAtable="assign";
+	    $asnAsubm="assign_submission";
+            break;
+//sw 08/28
+        case "assignsubmission_onlinetext":
+            $asnAtable="assign";
+	    $asnAsubm="assign_submission";
+            break;
+//sw 08/28 end
+        case "mod_assignment":
+    	    $asnAtable="assignment";
+            $asnAsubm="assignment_submissions";
+            break;
+    }
+    if (!$submissionA = $DB->get_record($asnAsubm, array("id" => $fileA->itemid))) {
         print_error(get_string('incorrect_submAid','plagiarism_crot'));
     }
-    if (!$assignA = $DB->get_record("assignment", array("id" => $submissionA->assignment))) {
+    if (!$assignA = $DB->get_record($asnAtable, array("id" => $submissionA->assignment))) {
 		print_error(get_string('incorrect_assignmentAid','plagiarism_crot'));
 	}
     
@@ -50,7 +68,7 @@
         print_error(get_string('have_to_be_a_teacher', 'plagiarism_crot'));
     }
     // build navigation and header    
-    $view_url = new moodle_url('/mod/assignment/view.php', array('id' => $subA->cm));
+    $view_url = new moodle_url('/mod/'.$asnAtable.'/view.php', array('id' => $subA->cm));
     $PAGE->navbar->add($assignA->name,$view_url);
     $PAGE->navbar->add($strmodulename. " - " . $strassignment);
     $PAGE->set_title($course->shortname.": ".$assignA->name.": ".$strmodulename. " - " . $strassignment);
@@ -127,6 +145,6 @@
     echo $OUTPUT->box(get_string('assignments_not_displayed','plagiarism_crot',$threshold));
     echo html_writer::table($table);
 
-echo get_string('bing_search','plagiarism_crot')." <a href =\"http://www.bing.com\" target=\"_new\"><img src= \"http://www.bing.com/siteowner/s/siteowner/Logo_63x23_Dark.png\"> </a>";
+//echo get_string('bing_search','plagiarism_crot')." <a href =\"http://www.bing.com\" target=\"_new\"><img src= \"http://www.bing.com/siteowner/s/siteowner/Logo_63x23_Dark.png\"> </a>";
 echo $OUTPUT->footer($course);
 ?>

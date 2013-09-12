@@ -33,7 +33,7 @@ INSTALLATION
 2. Login to Moodle as an admin. Plugins check page will be opened. Click on Upgrade button at the bottom of the page. Moodle will setup the required tables for you.
 3. Go to Advanced features in the admin's menu and check "Enable plagiarism plugins" option. Save changes. 
 4. Open Plugins/Plagiarism prevention/Crot link from the admin's menu.
-5. OBSOLETE because of Bing issue: Check "Enable Crot" and put Bing Application ID key in the appropriate text box. Save changes.
+5. Check "Enable Crot". OBSOLETE because of Bing issue: Put Bing Application ID key in the appropriate text box. Save changes.
 6. Other settings you may change later based on your experience with the plug-in. 
 	The complete description of these settings is as follows:
 		- Student disclosure: This text will appear on the assignment submission page when student work will be uploaded to the system.

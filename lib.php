@@ -14,7 +14,6 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
-
 /**
  * lib.php - Contains Plagiarism plugin specific functions called by Modules.
  *
@@ -31,7 +30,7 @@ if (!defined('MOODLE_INTERNAL')) {
 }
 
 //get global class
-global $CFG;
+global $CFG, $DB;
 require_once($CFG->dirroot.'/plagiarism/lib.php');
 
 ///// Crot Class ////////////////////////////////////////////////////
@@ -49,9 +48,15 @@ class plagiarism_plugin_crot extends plagiarism_plugin {
         $userid = $linkarray['userid'];
         $file = $linkarray['file'];
         $course = $linkarray['course'];
+//sw 08/27
         $cid = $course->id;
-        $output = '';
+        if (empty($cid)) { $cid = $course;}
+// end sw 08/27
+//        if (!empty($plagiarismsettings['crot_use'])) { //sw 4-21
+ //           if (isset($data->crot_use)) { //sw 4-21
+
         //add link/information about this file to $output
+        if (!empty($file)){ //sw
             if (!$plagiarism_crot_files_rec = $DB->get_record("plagiarism_crot_files", array("file_id"=>$file->get_id()))) {
                 $output .= '';// if there is no record in plagiarism_crot_files about this file then nothing to show
             }
@@ -72,6 +77,38 @@ class plagiarism_plugin_crot extends plagiarism_plugin {
                     }
                 }
             }
+          }else{
+              // For online text/type-ins
+              $path =  $linkarray['content'];
+              $path = strip_tags($path);
+              $path = sha1($path);
+              $sql_query = "SELECT * FROM {$CFG->prefix}plagiarism_crot_files WHERE path ='$path' AND courseid = $course AND cm = $cmid ORDER BY file_id DESC LIMIT 1";
+              $file = $DB->get_record_sql($sql_query);
+              $fileid = $file->file_id;
+              
+              if (!$plagiarism_crot_files_rec = $DB->get_record("plagiarism_crot_files", array("file_id"=>$fileid))) {
+                  $output .= '<small><i>Pending</i></small> ';// if there is no record in plagiarism_crot_files about this file then nothing to show
+              }
+              else {
+                  if (!$crot_doc_rec = $DB->get_record("plagiarism_crot_documents", array("crot_submission_id"=>$plagiarism_crot_files_rec->id))) {
+                      $output .= '';// if there is no record in plagiarism_crot_documents about this file then nothing to show
+                  }
+                  else {
+                      $sql_query = "SELECT max(number_of_same_hashes) as max FROM {$CFG->prefix}plagiarism_crot_submission_pair WHERE submission_a_id ='$crot_doc_rec->id' OR  submission_b_id = '$crot_doc_rec->id'";
+                      if (!$similarity = $DB->get_record_sql($sql_query)) {// get maximum number of same hashes for the current document
+                          $output .= '<br><b>'.get_string('no_similarities','plagiarism_crot').'</b>';
+                      }
+                      else {
+                          $sql_query = "SELECT count(*) as cnt from {$CFG->prefix}plagiarism_crot_fingerprint where crot_doc_id = '$crot_doc_rec->id'";
+                          $numbertotal = $DB->get_record_sql($sql_query);// get total number of hashes for the current document
+                          $perc =  round(($similarity->max / $numbertotal->cnt) * 100, 2);
+                          $output .= "<br><b> <a href=\"../../plagiarism/crot/index.php?id_a=$crot_doc_rec->id&user_id=$userid&cid=$cid\">".$perc."%</a></b> ";
+                      }
+                  }
+              }
+          }//sw
+//} //sw 4-21
+//} // sw 4-41
         return $output;
     }
 
@@ -187,32 +224,77 @@ class plagiarism_plugin_crot extends plagiarism_plugin {
     }
 }
 
-function crot_event_file_uploaded($eventdata) {
+function crot_event_files_done($eventdata) {
     global $DB;
     $result = true;
         //a file has been uploaded - submit this to the plagiarism prevention service.
         
     return $result;
 }
-function crot_event_files_done($eventdata) {
-    global $DB;
+function crot_event_file_uploaded($eventdata) {
+     global $DB, $CFG;
     $result = true;
         //mainly used by assignment finalize - used if you want to handle "submit for marking" events
         //a file has been uploaded/finalised - submit this to the plagiarism prevention service.
-    $plagiarismvalues = $DB->get_records_menu('plagiarism_crot_config', array('cm'=>$eventdata->cmid),'','name,value');
+    
+//    $plagiarismvalues = $DB->get_records_menu('plagiarism_crot_config', array('cm'=>$eventdata->cmid),'','name,value');
+
+    $cmid = (!empty($eventdata->cm->id)) ? $eventdata->cm->id : $eventdata->cmid;
+    $plagiarismvalues = $DB->get_records_menu('plagiarism_crot_config', array('cm'=>$cmid), '', 'name,value');
     if (empty($plagiarismvalues['crot_use'])) {
         return $result;
     }
     else {
-        $status_value = array('queue','in_processing','end_processing');
+    //sw 21/02
+        $cm = $DB->get_record('course_modules', array('id' => $eventdata->cmid));
+        if (empty($cm)) {
+        	$cm = $DB->get_record('course_modules', array('id' => $cmid));
+	}
+    //sw    
+        if (empty($cm)) {
+        return $result;
+    	}
+        $modulename = $DB->get_field('modules', 'name', array('id' => $cm->module));
+        //sw uncommented
+        require_once("$CFG->dirroot/mod/$modulename/lib.php");
+        //sw
+	$status_value = array('queue','in_processing','end_processing');
         $modulecontext = get_context_instance(CONTEXT_MODULE, $eventdata->cmid);
-        $fs = get_file_storage();
-        if ($files = $fs->get_area_files($modulecontext->id, 'mod_assignment','submission', $eventdata->itemid)) {
-            // put files that were submitted for marking into queue for check up
-            foreach ($files as $file) {
-                if ($file->get_filename()==='.') {
-                    continue;
-                }
+        // put files that were submitted for marking into queue for check up
+//sw
+	if ($eventdata->modulename == 'assignment') {
+	    require_once("$CFG->dirroot/mod/assignment/lib.php");
+	    $assignmentbase = new assignment_base($cmid);
+	    $submission = $assignmentbase->get_submission($eventdata->userid);
+	    $fs = get_file_storage();
+	    if ($files = $fs->get_area_files($modulecontext->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false)) {
+	        foreach ($files as $file) {
+        	    if ($file->get_filename() ==='.') {
+            		// This 'file' is actually a directory - nothing to submit.
+            		continue;
+        	    }
+            	    $newelement = new stdclass();
+            	    $newelement->file_id = $file->get_id();
+            	    $newelement->path = $file->get_contenthash();
+            	    $newelement->status = $status_value[0]; 
+            	    $newelement->time = time(); 
+            	    $newelement->cm = $eventdata->cmid;    
+            	    $newelement->courseid = $eventdata->courseid; 
+            	    $result=$DB->insert_record('plagiarism_crot_files', $newelement);
+            	    echo "\nfile ".$file->get_filename()." was queued up for plagiarism detection service\n";
+		}
+	    }
+	}
+	else { 
+	    if ($eventdata->modulename == 'assign') {
+//sw
+            foreach ($eventdata->pathnamehashes as $hash) {
+        	$fs = get_file_storage();
+        	$file = $fs->get_file_by_hash($hash);
+        	if (empty($file)||($file->get_filename() ==='.')) {
+                // This 'file' is actually a directory - nothing to submit.
+            	    continue;
+        	}
                 $newelement = new stdclass();
                 $newelement->file_id = $file->get_id();
                 $newelement->path = $file->get_contenthash();
@@ -222,10 +304,63 @@ function crot_event_files_done($eventdata) {
                 $newelement->courseid = $eventdata->courseid; 
                 $result=$DB->insert_record('plagiarism_crot_files', $newelement);
                 echo "\nfile ".$file->get_filename()." was queued up for plagiarism detection service\n";
-            }
-        }
+            }          
+//ws
+	    } //end assign
+	}
+
+///ws            
+            
         return $result;
     }
+}
+
+// Event handler for type-in/online text submissions
+// @author Hamman Samuel
+function crot_event_content_uploaded($eventdata) {
+    global $DB;
+    
+    if ($eventdata->modulename == "assign") {
+      $context = get_context_instance(CONTEXT_COURSE, $eventdata->courseid);
+      $filename = "crot_" . $eventdata->courseid . "_" . $eventdata->cmid. "_" . $eventdata->userid . "_" .time().".txt";
+      $filepath = "/"; // has to start and end with /, rule of the Moodle file storage api
+      print_r($eventdata);
+      $filerecord = new stdclass();
+      $filerecord->contextid = $context->id;
+      $filerecord->userid = $eventdata->userid;
+      $filerecord->component = "assignsubmission_onlinetext";
+      $filerecord->filearea = "onlinetext";
+      //sw
+      $filerecord->itemid = $eventdata->itemid;
+      $uid321 = $filerecord->userid;
+      
+      $urecm = $DB->get_record('user', array('id' => $uid321));
+      
+      $filerecord->author = $urecm->firstname." ".$urecm->lastname;
+      // sw end
+      $filerecord->filepath = $filepath;
+      $filerecord->filename = $filename;
+      
+      $fs = get_file_storage(); // using file storage system ensures that the file can be located by other api calls
+                                // this creates a hash-version of the file in the Moodle data folder and also creates entries in the 'files' table
+      $content = strip_tags($eventdata->content);
+      $file = $fs->create_file_from_string($filerecord, $content); // convert online text to a text file
+      
+      $content = strip_tags($eventdata->content);
+      $plagiarism_file = new object(); // create an entry in the crot table
+      $plagiarism_file->file_id = $file->get_id();
+      $plagiarism_file->path = $file->get_contenthash();
+      $plagiarism_file->status = 'queue';
+      $plagiarism_file->time = time();
+      $plagiarism_file->cm = $eventdata->cmid;
+      $plagiarism_file->courseid = $eventdata->courseid;
+      //$plagiarism_file->userid = $eventdata->userid;
+      
+      $result = $DB->insert_record('plagiarism_crot_files', $plagiarism_file);
+      echo "\nType-in assignment was queued up for plagiarism detection service\n";
+  }
+  
+  return $result;
 }
 
 function crot_event_mod_created($eventdata) {

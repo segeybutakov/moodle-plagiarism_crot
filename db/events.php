@@ -15,6 +15,11 @@ $handlers = array (
         'handlerfunction'  => 'crot_event_files_done',
         'schedule'         => 'cron'
     ),
+    'assessable_content_uploaded' => array (
+        'handlerfile'      => '/plagiarism/crot/lib.php',
+        'handlerfunction'  => 'crot_event_content_uploaded',
+        'schedule'         => 'cron'
+    ),
     'mod_created' => array (
         'handlerfile'      => '/plagiarism/crot/lib.php',
         'handlerfunction'  => 'crot_event_mod_created',

@@ -56,7 +56,7 @@ class plagiarism_setup_form extends moodleform {
         
         $mform->addElement('text', 'crot_live_key', get_string('MS_live_key', 'plagiarism_crot'));
         $mform->addHelpButton('crot_live_key', 'MSlivekey', 'plagiarism_crot');
-        $mform->addRule('crot_live_key', null, 'required', null, 'client');
+        //$mform->addRule('crot_live_key', null, 'required', null, 'client');
         
         $mform->addElement('text', 'crot_global_search_query_size', get_string('global_search_query_size', 'plagiarism_crot'));
         $mform->addHelpButton('crot_global_search_query_size', 'globalsearchquerysize', 'plagiarism_crot');

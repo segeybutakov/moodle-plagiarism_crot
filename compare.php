@@ -9,7 +9,6 @@
 	global $CFG, $DB;
 	require_once($CFG->dirroot."/plagiarism/crot/locallib.php");
 	require_once($CFG->dirroot."/course/lib.php");
-	require_once($CFG->dirroot."/mod/assignment/lib.php");
 	
 	// globals
     $plagiarismsettings = (array)get_config('plagiarism');
@@ -48,10 +47,34 @@
         if (!$filea = $DB->get_record("files", array("id" => $subA->file_id))) {
             print_error(get_string('incorrect_fileAid','plagiarism_crot'));
         }
-		if (!$submissionA = $DB->get_record("assignment_submissions", array("id" => $filea->itemid))) {
+    // sw define type of the assignment
+	$asnAtype = $filea-> component;
+        switch ($asnAtype) {
+            case "assignsubmission_file":
+		require_once($CFG->dirroot."/mod/assign/lib.php");
+                $asnAtable="assign";
+                $asnAsubm="assign_submission";
+                break;
+//sw 08/27
+            case "assignsubmission_onlinetext":
+		require_once($CFG->dirroot."/mod/assign/lib.php");
+                $asnAtable="assign";
+                $asnAsubm="assign_submission";
+                break;
+
+//sw 0827 end
+            case "mod_assignment":
+		require_once($CFG->dirroot."/mod/assignment/lib.php");
+                $asnAtable="assignment";
+                $asnAsubm="assignment_submissions";
+                break;
+        }
+//	if (!$submissionA = $DB->get_record("assignment_submissions", array("id" => $filea->itemid))) {
+	if (!$submissionA = $DB->get_record($asnAsubm, array("id" => $filea->itemid))) {
             print_error(get_string('incorrect_submAid','plagiarism_crot'));
         }
-        if (! $assignA = $DB->get_record("assignment", array("id" => $submissionA->assignment))) {
+//        if (! $assignA = $DB->get_record("assignment", array("id" => $submissionA->assignment))) {
+        if (! $assignA = $DB->get_record($asnAtable, array("id" => $submissionA->assignment))) {
 			print_error(get_string('incorrect_assignmentAid','plagiarism_crot'));
 		}
 		if (! $courseA = $DB->get_record("course", array("id" => $subA->courseid))) {
@@ -70,11 +93,35 @@
 	        if (!$fileb = $DB->get_record("files", array("id" => $subB->file_id))) {
     		    print_error(get_string('incorrect_fileBid','plagiarism_crot'));
 	        }
-    		if (!$submissionB = $DB->get_record("assignment_submissions", array("id" => $fileb->itemid))) {
-	            print_error(get_string('incorrect_submBid','plagiarism_crot'));
+		$asnBtype = $fileb->component;
+//		print_r($asnBtype);
+
+    		switch ($asnBtype) {
+	            case "assignsubmission_file":
+	    		require_once($CFG->dirroot."/mod/assign/lib.php");
+    		        $asnBtable="assign";
+            		$asnBsubm="assign_submission";
+            		break;
+        	    case "mod_assignment":
+			require_once($CFG->dirroot."/mod/assignment/lib.php");
+	                $asnBtable="assignment";
+    		        $asnBsubm="assignment_submissions";
+            	    break;
+//sw 08/27
+	            case "assignsubmission_onlinetext":
+	    		require_once($CFG->dirroot."/mod/assign/lib.php");
+    		        $asnBtable="assign";
+            		$asnBsubm="assign_submission";
+            		break;
+// sw 08/27 end
     		}
-		if (! $assignB = $DB->get_record("assignment", array("id" => $submissionB->assignment))) {
-			print_error(get_string('incorrect_assignmentBid','plagiarism_crot'));
+//    		if (!$submissionB = $DB->get_record("assignment_submissions", array("id" => $fileb->itemid))) {
+    		if (!$submissionB = $DB->get_record($asnBsubm, array("id" => $fileb->itemid))) {
+	            print_error(get_string('incorrect_submBid','plagiarism_crot').'qwerty'.$fileb->itemid);
+    		}
+//		if (! $assignB = $DB->get_record("assignment", array("id" => $submissionB->assignment))) {
+		if (! $assignB = $DB->get_record($asnBtable, array("id" => $submissionB->assignment))) {
+			print_error(get_string('incorrect_assignmentBid'.'ytrewq','plagiarism_crot'));
 		}
 	        if (! $courseB = $DB->get_record("course", array("id" => $subB->courseid))) {
 			print_error(get_string('incorrect_courseBid','plagiarism_crot'));
@@ -91,7 +138,7 @@
 	$strmodulename = get_string("block_name", "plagiarism_crot");
 	$strassignment  = get_string("assignments", "plagiarism_crot");
 
-    $view_url = new moodle_url('/mod/assignment/view.php', array('id' => $subA->cm));
+    $view_url = new moodle_url('/mod/'.$asnAtable.'/view.php', array('id' => $subA->cm));
     $PAGE->navbar->add($assignA->name,$view_url);
 	$PAGE->navbar->add($strmodulename. " - " . $strassignment);
     $PAGE->set_title($courseA->shortname.": ".$assignA->name.": ".$strmodulename. " - " . $strassignment);
@@ -291,7 +338,9 @@
     {
 		if (! $studentA = $DB->get_record("files", array("id" => $subA->file_id))) {
 			$strstudentA = get_string('name_unknown','plagiarism_crot');
-        } else {
+        } else {	
+    			//sw
+    			//sw end
 			$strstudentA = $studentA->author.":<br> ".$courseA->shortname.", ".$assignA->name;
 		}
 	}
@@ -312,6 +361,9 @@
 		$strstudentB = get_string('name_unknown','plagiarism_crot');
 		} 
 		else {
+//    			if (empty($studentA->author)){
+//    			    $studentB->author = print_r($studentB);
+//    			}
 		$strstudentB = $studentB->author.":<br> ".$courseB->shortname.", ".$assignB->name;
 		}
 	}
@@ -331,8 +383,8 @@
 padding:2px;height:300px;overflow:scroll;border-width:2px;border-style:outset;background-color:lightgrey;}
 --></STYLE>
 <?php
-	$textA = "<div id=\"example\"><FONT SIZE=1>".ereg_replace("\n","<br>",$textA)."</font> </div>";
-	$textB = "<div id=\"example\"><FONT SIZE=1>".ereg_replace("\n","<br>",$textB)."</font> </div>";
+	$textA = "<div id=\"example\"><FONT SIZE=1>".preg_replace('/\n/',"<br>",$textA)."</font> </div>";
+	$textB = "<div id=\"example\"><FONT SIZE=1>".preg_replace('/\n/',"<br>",$textB)."</font> </div>";
 	$table = new html_table();
     $table->head  = array ($strstudentA, $strstudentB);
    	$table->align = array ("center", "center");
