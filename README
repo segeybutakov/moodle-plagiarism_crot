@@ -32,6 +32,7 @@ INSTALLATION
 1. Untar the crot folder into plagiarism/crot. Make sure you rename module folder to crot!
 2. Login to Moodle as an admin. Plugins check page will be opened. Click on Upgrade button at the bottom of the page. Moodle will setup the required tables for you.
 3. Go to Advanced features in the admin's menu and check "Enable plagiarism plugins" option. Save changes. 
+3.a. IMPORTANT: purge all caches from the admin interface
 4. Open Plugins/Plagiarism prevention/Crot link from the admin's menu.
 5. Check "Enable Crot". OBSOLETE because of Bing issue: Put Bing Application ID key in the appropriate text box. Save changes.
 6. Other settings you may change later based on your experience with the plug-in. 
