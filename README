@@ -29,6 +29,8 @@ http://www.bing.com/developers
 and follow the instructions to get the App ID.
 
 INSTALLATION
+0. If you are using MySQL or Maria DBMS you need to adjust some DB settings:
+CHANGE THE VALUE OF NAME_MAX_LENGTH in moodle/lib/xmldb/xmldb_table.php  (line 47) TO 45
 1. Untar the crot folder into plagiarism/crot. Make sure you rename module folder to crot!
 2. Login to Moodle as an admin. Plugins check page will be opened. Click on Upgrade button at the bottom of the page. Moodle will setup the required tables for you.
 3. Go to Advanced features in the admin's menu and check "Enable plagiarism plugins" option. Save changes. 
