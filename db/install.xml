@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
   <TABLES>
-    <TABLE NAME="plagiarism_crot_submission_pair" COMMENT="crot_assignment_submission_pair table. It stores information about number of same hashes in the pair of submissions" NEXT="plagiarism_crot_config">
+    <TABLE NAME="plagiarism_crot_spair" COMMENT="crot_assignment_submission_pair table. It stores information about number of same hashes in the pair of submissions" NEXT="plagiarism_crot_config">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="submission_a_id"/>
         <FIELD NAME="submission_a_id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="submission_b_id"/>
@@ -14,7 +14,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="plagiarism_crot_config" COMMENT="contains crot specific settings for each course module" PREVIOUS="plagiarism_crot_submission_pair" NEXT="plagiarism_crot_fingerprint">
+    <TABLE NAME="plagiarism_crot_config" COMMENT="contains crot specific settings for each course module" PREVIOUS="plagiarism_crot_spair" NEXT="plagiarism_crot_fingerprint">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="cm"/>
         <FIELD NAME="cm" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="name"/>
@@ -40,7 +40,7 @@
         <INDEX NAME="ix_docid_value" UNIQUE="false" FIELDS="crot_doc_id, value"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="plagiarism_crot_documents" COMMENT="Keeps the documents from submissions as well as downloaded web documents" PREVIOUS="plagiarism_crot_fingerprint" NEXT="plagiarism_crot_web_documents">
+    <TABLE NAME="plagiarism_crot_documents" COMMENT="Keeps the documents from submissions as well as downloaded web documents" PREVIOUS="plagiarism_crot_fingerprint" NEXT="plagiarism_crot_webdoc">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="content"/>
         <FIELD NAME="content" TYPE="binary" LENGTH="small" NOTNULL="false" SEQUENCE="false" COMMENT="the plain text" PREVIOUS="id" NEXT="crot_submission_id"/>
@@ -53,7 +53,7 @@
         <INDEX NAME="idx_crot_subm_id" UNIQUE="false" FIELDS="crot_submission_id"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="plagiarism_crot_web_documents" COMMENT="this is to save URL for web documents" PREVIOUS="plagiarism_crot_documents" NEXT="plagiarism_crot_files">
+    <TABLE NAME="plagiarism_crot_webdoc" COMMENT="this is to save URL for web documents" PREVIOUS="plagiarism_crot_documents" NEXT="plagiarism_crot_files">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="document_id"/>
         <FIELD NAME="document_id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="id" NEXT="link"/>
@@ -66,7 +66,7 @@
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
     </TABLE>
-    <TABLE NAME="plagiarism_crot_files" COMMENT="stores files for plagiarism check up" PREVIOUS="plagiarism_crot_web_documents">
+    <TABLE NAME="plagiarism_crot_files" COMMENT="stores files for plagiarism check up" PREVIOUS="plagiarism_crot_webdoc">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="file_id"/>
         <FIELD NAME="file_id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="path"/>

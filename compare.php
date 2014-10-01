@@ -345,7 +345,7 @@
 		}
 	}
 	else {
-		$wdoc = $DB->get_record("plagiarism_crot_web_documents", array("document_id" => $ida));
+		$wdoc = $DB->get_record("plagiarism_crot_webdoc", array("document_id" => $ida));
 		if (strlen($wdoc->link)>40) {
 			$linkname = substr($wdoc->link,0,40);
 		}
@@ -368,7 +368,7 @@
 		}
 	}
 	else {
-		$wdoc = $DB->get_record("plagiarism_crot_web_documents", array("document_id" => $idb));
+		$wdoc = $DB->get_record("plagiarism_crot_webdoc", array("document_id" => $idb));
 		if (strlen($wdoc->link)>40) {
 			$linkname = substr($wdoc->link,0,40);
 		}

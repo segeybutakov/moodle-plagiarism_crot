@@ -87,7 +87,7 @@
 	
     // select all the assignments that have similarities with the current document
     $table2 = "<table border=2 width='100%'><tr><td width='50%'>$strname</td><td width='40%'>$strcourse</td><td  width='10%'>$strscore</td></tr>";
-    $sql_query = "SELECT * FROM {$CFG->prefix}plagiarism_crot_submission_pair WHERE submission_a_id ='$ida' OR  submission_b_id = '$ida' order by number_of_same_hashes desc";
+    $sql_query = "SELECT * FROM {$CFG->prefix}plagiarism_crot_spair WHERE submission_a_id ='$ida' OR  submission_b_id = '$ida' order by number_of_same_hashes desc";
     $similars = $DB->get_records_sql($sql_query);
     $sql_query = "SELECT count(*) as cnt from {$CFG->prefix}plagiarism_crot_fingerprint where crot_doc_id = '$ida'";
     $numbertotal = $DB->get_record_sql($sql_query);// get total number of hashes in the current document
@@ -107,7 +107,7 @@
 		
 		    if ($subm3->crot_submission_id == 0) {
 			// web document
-                $wwwdoc = $DB->get_record("plagiarism_crot_web_documents", array("document_id"=>$party));					
+                $wwwdoc = $DB->get_record("plagiarism_crot_webdoc", array("document_id"=>$party));					
                 $nURL = urldecode($wwwdoc->link);
                 $namelink = substr($nURL,0,40);
                 $courseBname = get_string('webdocument','plagiarism_crot');

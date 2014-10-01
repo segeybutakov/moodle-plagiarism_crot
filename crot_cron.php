@@ -99,7 +99,7 @@ if (!empty($files)){
         echo "starting local search \n";
         $plagiarismvalues = $DB->get_records_menu('plagiarism_crot_config', array('cm'=>$afile->cm),'','name,value');
         if ($plagiarismvalues['crot_local']==1) {
-			// comparing fingerprints and updating plagiarism_crot_submission_pair table
+			// comparing fingerprints and updating plagiarism_crot_spair table
 			// select all submissions that has at least on common f/print with the current document
 			$sql_query ="SELECT id
 				FROM {$CFG->prefix}plagiarism_crot_documents asg
@@ -114,7 +114,7 @@ if (!empty($files)){
 			foreach ($pair_submissions as $pair_submission){
 				// check if id exists in web_doc table then don't compare because
 				// we consider only local documents here
-				if ($webdoc = $DB->get_record("plagiarism_crot_web_documents", array('document_id'=>$pair_submission->id)))
+				if ($webdoc = $DB->get_record("plagiarism_crot_webdoc", array('document_id'=>$pair_submission->id)))
 					continue;
 				//compare two fingerprints to get the number of same hashes
 				if ($docid!=$pair_submission->id){
@@ -133,7 +133,7 @@ if (!empty($files)){
 						) t";
 					$similarnumber = $DB->get_record_sql($sql_query);
 					// takes id1 id2 and create/update record with the number of similar hashes
-					$sql_query ="SELECT * FROM {$CFG->prefix}plagiarism_crot_submission_pair 
+					$sql_query ="SELECT * FROM {$CFG->prefix}plagiarism_crot_spair 
 							where (submission_a_id = $afile->id and submission_b_id = $pair_submission->id) 
 							OR (submission_a_id = $pair_submission->id and submission_b_id = $afile->id)";
 					$pair = $DB->get_record_sql($sql_query);
@@ -142,7 +142,7 @@ if (!empty($files)){
 						$pair_record->submission_a_id = $docid;
 						$pair_record->submission_b_id = $pair_submission->id;
 						$pair_record->number_of_same_hashes = $similarnumber->cnt;
-						$DB->insert_record("plagiarism_crot_submission_pair", $pair_record);	
+						$DB->insert_record("plagiarism_crot_spair", $pair_record);	
 					} else {
 						// TODO update		
 					}
@@ -232,10 +232,10 @@ if (!empty($files)){
 				$webdocrecord->link_live=urlencode($manUrl->msUrl);
 				$webdocrecord->is_from_cache=false;
 				$webdocrecord->related_doc_id = $docid;
-				$webdocid = $DB->insert_record("plagiarism_crot_web_documents", $webdocrecord);
+				$webdocid = $DB->insert_record("plagiarism_crot_webdoc", $webdocrecord);
                 //$weblink = urlencode($manUrl->mainUrl);
                 //$weblinklive = urlencode($manUrl->msUrl);
-                //$query = "INSERT INTO {$CFG->prefix}plagiarism_crot_web_documents (document_id,link,link_live,is_from_cache,related_doc_id) VALUES ('$wdocid','$weblink','$weblinklive','false','$docid')";			
+                //$query = "INSERT INTO {$CFG->prefix}plagiarism_crot_webdoc (document_id,link,link_live,is_from_cache,related_doc_id) VALUES ('$wdocid','$weblink','$weblinklive','false','$docid')";			
                 //mysql_query($query);
                 //$webdocid = mysql_insert_id();
 				// fingerprinting - calculate and store the fingerprints into the table
@@ -287,7 +287,7 @@ if (!empty($files)){
 					$pair_record->submission_a_id = $docid;
 					$pair_record->submission_b_id = $wdocid;
 					$pair_record->number_of_same_hashes = $similarnumber->cnt;
-					$ppair = $DB->insert_record("plagiarism_crot_submission_pair", $pair_record);
+					$ppair = $DB->insert_record("plagiarism_crot_spair", $pair_record);
 				} else {
 					//if null then remove the web document and its fingerprint
 					// remove from doc
@@ -370,7 +370,7 @@ if (!empty($files)){
         echo "starting local search \n";
         $plagiarismvalues = $DB->get_records_menu('plagiarism_crot_config', array('cm'=>$afile->cm),'','name,value');
         if ($plagiarismvalues['crot_local']==1) {
-			// comparing fingerprints and updating plagiarism_crot_submission_pair table
+			// comparing fingerprints and updating plagiarism_crot_spair table
 			// select all submissions that has at least on common f/print with the current document
 			$sql_query ="SELECT id
 				FROM {$CFG->prefix}plagiarism_crot_documents asg
@@ -385,7 +385,7 @@ if (!empty($files)){
 			foreach ($pair_submissions as $pair_submission){
 				// check if id exists in web_doc table then don't compare because
 				// we consider only local documents here
-				if ($webdoc = $DB->get_record("plagiarism_crot_web_documents", array('document_id'=>$pair_submission->id)))
+				if ($webdoc = $DB->get_record("plagiarism_crot_webdoc", array('document_id'=>$pair_submission->id)))
 					continue;
 				//compare two fingerprints to get the number of same hashes
 				if ($docid!=$pair_submission->id){
@@ -404,7 +404,7 @@ if (!empty($files)){
 						) t";
 					$similarnumber = $DB->get_record_sql($sql_query);
 					// takes id1 id2 and create/update record with the number of similar hashes
-					$sql_query ="SELECT * FROM {$CFG->prefix}plagiarism_crot_submission_pair 
+					$sql_query ="SELECT * FROM {$CFG->prefix}plagiarism_crot_spair 
 							where (submission_a_id = $afile->id and submission_b_id = $pair_submission->id) 
 							OR (submission_a_id = $pair_submission->id and submission_b_id = $afile->id)";
 					$pair = $DB->get_record_sql($sql_query);
@@ -413,7 +413,7 @@ if (!empty($files)){
 						$pair_record->submission_a_id = $docid;
 						$pair_record->submission_b_id = $pair_submission->id;
 						$pair_record->number_of_same_hashes = $similarnumber->cnt;
-						$DB->insert_record("plagiarism_crot_submission_pair", $pair_record);	
+						$DB->insert_record("plagiarism_crot_spair", $pair_record);	
 					} else {
 						// TODO update		
 					}
@@ -503,10 +503,10 @@ if (!empty($files)){
 				$webdocrecord->link_live=urlencode($manUrl->msUrl);
 				$webdocrecord->is_from_cache=false;
 				$webdocrecord->related_doc_id = $docid;
-				$webdocid = $DB->insert_record("plagiarism_crot_web_documents", $webdocrecord);
+				$webdocid = $DB->insert_record("plagiarism_crot_webdoc", $webdocrecord);
                 //$weblink = urlencode($manUrl->mainUrl);
                 //$weblinklive = urlencode($manUrl->msUrl);
-                //$query = "INSERT INTO {$CFG->prefix}plagiarism_crot_web_documents (document_id,link,link_live,is_from_cache,related_doc_id) VALUES ('$wdocid','$weblink','$weblinklive','false','$docid')";			
+                //$query = "INSERT INTO {$CFG->prefix}plagiarism_crot_webdoc (document_id,link,link_live,is_from_cache,related_doc_id) VALUES ('$wdocid','$weblink','$weblinklive','false','$docid')";			
                 //mysql_query($query);
                 //$webdocid = mysql_insert_id();
 				// fingerprinting - calculate and store the fingerprints into the table
@@ -558,7 +558,7 @@ if (!empty($files)){
 					$pair_record->submission_a_id = $docid;
 					$pair_record->submission_b_id = $wdocid;
 					$pair_record->number_of_same_hashes = $similarnumber->cnt;
-					$ppair = $DB->insert_record("plagiarism_crot_submission_pair", $pair_record);
+					$ppair = $DB->insert_record("plagiarism_crot_spair", $pair_record);
 				} else {
 					//if null then remove the web document and its fingerprint
 					// remove from doc
