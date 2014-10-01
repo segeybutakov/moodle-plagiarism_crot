@@ -114,7 +114,7 @@ if (!empty($files)){
 			foreach ($pair_submissions as $pair_submission){
 				// check if id exists in web_doc table then don't compare because
 				// we consider only local documents here
-				if ($webdoc = $DB->get_record("plagiarism_crot_web_documents", array('document_id'=>$pair_submission->id)))
+				if ($webdoc = $DB->get_record("plagiarism_crot_webdoc", array('document_id'=>$pair_submission->id)))
 					continue;
 				//compare two fingerprints to get the number of same hashes
 				if ($docid!=$pair_submission->id){
@@ -232,10 +232,10 @@ if (!empty($files)){
 				$webdocrecord->link_live=urlencode($manUrl->msUrl);
 				$webdocrecord->is_from_cache=false;
 				$webdocrecord->related_doc_id = $docid;
-				$webdocid = $DB->insert_record("plagiarism_crot_web_documents", $webdocrecord);
+				$webdocid = $DB->insert_record("plagiarism_crot_webdoc", $webdocrecord);
                 //$weblink = urlencode($manUrl->mainUrl);
                 //$weblinklive = urlencode($manUrl->msUrl);
-                //$query = "INSERT INTO {$CFG->prefix}plagiarism_crot_web_documents (document_id,link,link_live,is_from_cache,related_doc_id) VALUES ('$wdocid','$weblink','$weblinklive','false','$docid')";			
+                //$query = "INSERT INTO {$CFG->prefix}plagiarism_crot_webdoc (document_id,link,link_live,is_from_cache,related_doc_id) VALUES ('$wdocid','$weblink','$weblinklive','false','$docid')";			
                 //mysql_query($query);
                 //$webdocid = mysql_insert_id();
 				// fingerprinting - calculate and store the fingerprints into the table
@@ -385,7 +385,7 @@ if (!empty($files)){
 			foreach ($pair_submissions as $pair_submission){
 				// check if id exists in web_doc table then don't compare because
 				// we consider only local documents here
-				if ($webdoc = $DB->get_record("plagiarism_crot_web_documents", array('document_id'=>$pair_submission->id)))
+				if ($webdoc = $DB->get_record("plagiarism_crot_webdoc", array('document_id'=>$pair_submission->id)))
 					continue;
 				//compare two fingerprints to get the number of same hashes
 				if ($docid!=$pair_submission->id){
@@ -503,10 +503,10 @@ if (!empty($files)){
 				$webdocrecord->link_live=urlencode($manUrl->msUrl);
 				$webdocrecord->is_from_cache=false;
 				$webdocrecord->related_doc_id = $docid;
-				$webdocid = $DB->insert_record("plagiarism_crot_web_documents", $webdocrecord);
+				$webdocid = $DB->insert_record("plagiarism_crot_webdoc", $webdocrecord);
                 //$weblink = urlencode($manUrl->mainUrl);
                 //$weblinklive = urlencode($manUrl->msUrl);
-                //$query = "INSERT INTO {$CFG->prefix}plagiarism_crot_web_documents (document_id,link,link_live,is_from_cache,related_doc_id) VALUES ('$wdocid','$weblink','$weblinklive','false','$docid')";			
+                //$query = "INSERT INTO {$CFG->prefix}plagiarism_crot_webdoc (document_id,link,link_live,is_from_cache,related_doc_id) VALUES ('$wdocid','$weblink','$weblinklive','false','$docid')";			
                 //mysql_query($query);
                 //$webdocid = mysql_insert_id();
 				// fingerprinting - calculate and store the fingerprints into the table

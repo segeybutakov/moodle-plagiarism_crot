@@ -107,7 +107,7 @@
 		
 		    if ($subm3->crot_submission_id == 0) {
 			// web document
-                $wwwdoc = $DB->get_record("plagiarism_crot_web_documents", array("document_id"=>$party));					
+                $wwwdoc = $DB->get_record("plagiarism_crot_webdoc", array("document_id"=>$party));					
                 $nURL = urldecode($wwwdoc->link);
                 $namelink = substr($nURL,0,40);
                 $courseBname = get_string('webdocument','plagiarism_crot');

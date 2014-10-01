@@ -92,7 +92,7 @@ function clean_data(){
     $DB->delete_records("plagiarism_crot_documents");
 	$DB->delete_records("plagiarism_crot_fingerprint");
 	$DB->delete_records("plagiarism_crot_spair");
-	$DB->delete_records("plagiarism_crot_web_documents");
+	$DB->delete_records("plagiarism_crot_webdoc");
     notify(get_string('tables_cleaned_up','plagiarism_crot'), 'notifysuccess');
 }
 
