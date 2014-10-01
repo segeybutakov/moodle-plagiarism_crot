@@ -87,7 +87,7 @@
 	
     // select all the assignments that have similarities with the current document
     $table2 = "<table border=2 width='100%'><tr><td width='50%'>$strname</td><td width='40%'>$strcourse</td><td  width='10%'>$strscore</td></tr>";
-    $sql_query = "SELECT * FROM {$CFG->prefix}plagiarism_crot_submission_pair WHERE submission_a_id ='$ida' OR  submission_b_id = '$ida' order by number_of_same_hashes desc";
+    $sql_query = "SELECT * FROM {$CFG->prefix}plagiarism_crot_spair WHERE submission_a_id ='$ida' OR  submission_b_id = '$ida' order by number_of_same_hashes desc";
     $similars = $DB->get_records_sql($sql_query);
     $sql_query = "SELECT count(*) as cnt from {$CFG->prefix}plagiarism_crot_fingerprint where crot_doc_id = '$ida'";
     $numbertotal = $DB->get_record_sql($sql_query);// get total number of hashes in the current document

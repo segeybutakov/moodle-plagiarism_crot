@@ -65,7 +65,7 @@ class plagiarism_plugin_crot extends plagiarism_plugin {
                     $output .= '';// if there is no record in plagiarism_crot_documents about this file then nothing to show
                 }
                 else {
-                    $sql_query = "SELECT max(number_of_same_hashes) as max FROM {$CFG->prefix}plagiarism_crot_submission_pair WHERE submission_a_id ='$crot_doc_rec->id' OR  submission_b_id = '$crot_doc_rec->id'";
+                    $sql_query = "SELECT max(number_of_same_hashes) as max FROM {$CFG->prefix}plagiarism_crot_spair WHERE submission_a_id ='$crot_doc_rec->id' OR  submission_b_id = '$crot_doc_rec->id'";
                     if (!$similarity = $DB->get_record_sql($sql_query)) {// get maximum number of same hashes for the current document
                         $output .= '<br><b>'.get_string('no_similarities','plagiarism_crot').'</b>';
                     }
@@ -94,7 +94,7 @@ class plagiarism_plugin_crot extends plagiarism_plugin {
                       $output .= '';// if there is no record in plagiarism_crot_documents about this file then nothing to show
                   }
                   else {
-                      $sql_query = "SELECT max(number_of_same_hashes) as max FROM {$CFG->prefix}plagiarism_crot_submission_pair WHERE submission_a_id ='$crot_doc_rec->id' OR  submission_b_id = '$crot_doc_rec->id'";
+                      $sql_query = "SELECT max(number_of_same_hashes) as max FROM {$CFG->prefix}plagiarism_crot_spair WHERE submission_a_id ='$crot_doc_rec->id' OR  submission_b_id = '$crot_doc_rec->id'";
                       if (!$similarity = $DB->get_record_sql($sql_query)) {// get maximum number of same hashes for the current document
                           $output .= '<br><b>'.get_string('no_similarities','plagiarism_crot').'</b>';
                       }
