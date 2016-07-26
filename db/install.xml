@@ -3,7 +3,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd">
   <TABLES>
-    <TABLE NAME="plagiarism_crot_spair" COMMENT="crot_assignment_submission_pair table. It stores information about number of same hashes in the pair of submissions" NEXT="plagiarism_crot_config">
+    <TABLE NAME="plagiarism_crot_spair" COMMENT="plagiarism_crot_sub_pair table. It stores information about number of same hashes in the pair of submissions" NEXT="plagiarism_crot_config">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" NEXT="submission_a_id"/>
         <FIELD NAME="submission_a_id" TYPE="int" LENGTH="20" NOTNULL="true" UNSIGNED="true" SEQUENCE="false" PREVIOUS="id" NEXT="submission_b_id"/>
